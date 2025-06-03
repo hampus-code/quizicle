@@ -5,6 +5,7 @@ import {
 import { RootStackParamList } from "../types/navigation.types";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import HomeScreen from "../screens/Home/HomeScreen";
+import GameScreen from "../screens/Game/GameScreen";
 
 export type Props = NativeStackScreenProps<RootStackParamList, "Home">;
 
@@ -17,6 +18,11 @@ export default function RootStack() {
       <Stack.Screen
         name="Home"
         component={HomeScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Game"
+        component={GameScreen}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>
