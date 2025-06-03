@@ -1,22 +1,27 @@
-import { useQuery } from "@tanstack/react-query";
 import { View, StyleSheet } from "react-native";
 import { Card, Text } from "react-native-paper";
-import { fetchTriviaQuestions } from "../../api/APIMethods";
 
-export default function QuestionCard() {
-  const { data: questions } = useQuery({
-    queryKey: ["questions"],
-    queryFn: () => fetchTriviaQuestions()
-  });
+export default function QuestionCard({
+  category,
+  question
+}: {
+  category: string;
+  question: string;
+}) {
   return (
-    <View>
+    <View style={styles.container}>
       <Card style={styles.card}>
         <Card.Title
-          titleVariant="titleMedium"
-          title={`${questions?.category}`}
+          titleVariant="titleLarge"
+          titleStyle={styles.title}
+          title={category}
         />
         <Card.Content>
-          <Text>{questions?.question}</Text>
+          <View>
+            <Text variant="bodyLarge" style={styles.question}>
+              {question}
+            </Text>
+          </View>
         </Card.Content>
       </Card>
     </View>
@@ -24,9 +29,17 @@ export default function QuestionCard() {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    width: "90%"
+  },
   card: {
-    width: 350,
     height: 250,
     backgroundColor: "white"
+  },
+  title: {
+    textAlign: "center"
+  },
+  question: {
+    textAlign: "center"
   }
 });
