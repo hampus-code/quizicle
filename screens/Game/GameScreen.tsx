@@ -3,6 +3,7 @@ import QuestionCard from "../../components/card/QuestionCard";
 import { useQuery } from "@tanstack/react-query";
 import { fetchTriviaQuestions } from "../../api/APIMethods";
 import AnswerCard from "../../components/card/AnswerCard";
+import Timer from "../../components/timer/Timer";
 
 export default function GameScreen() {
   const decodeCharacters = (char: string) =>
@@ -31,6 +32,7 @@ export default function GameScreen() {
           <AnswerCard key={index} answer={answer} />
         ))}
       </View>
+      <Timer />
     </View>
   );
 }
@@ -39,7 +41,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
+    marginTop: 150
   },
   answerCardsContainer: {},
   answerCards: {
