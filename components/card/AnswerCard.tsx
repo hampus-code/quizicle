@@ -1,10 +1,29 @@
 import { View, StyleSheet } from "react-native";
 import { Card, Text } from "react-native-paper";
 
-export default function AnswerCard({ answer }: { answer: string }) {
+export default function AnswerCard({
+  answer,
+  onPress,
+  isSelectedAnswer,
+  isCorrectAnswer
+}: {
+  answer: string;
+  onPress: () => void;
+  isSelectedAnswer: boolean;
+  isCorrectAnswer: boolean;
+}) {
+  function getBackgroundColor() {
+    if (isCorrectAnswer) return "#4BB04F";
+    if (isSelectedAnswer) return "red";
+    return "white";
+  }
+
   return (
     <View style={styles.container}>
-      <Card style={styles.card}>
+      <Card
+        style={[styles.card, { backgroundColor: getBackgroundColor() }]}
+        onPress={isSelectedAnswer || isCorrectAnswer ? undefined : onPress}
+      >
         <Card.Content>
           <Text>{answer}</Text>
         </Card.Content>
