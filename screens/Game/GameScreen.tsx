@@ -4,6 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchTriviaQuestions } from "../../api/APIMethods";
 import AnswerCard from "../../components/card/AnswerCard";
 import Timer from "../../components/timer/Timer";
+import { LinearGradient } from "expo-linear-gradient";
+import { BackgroundGradients } from "../../types/colors";
 
 export default function GameScreen() {
   const decodeCharacters = (char: string) =>
@@ -22,22 +24,32 @@ export default function GameScreen() {
   const shuffledAnswers = allAnswers.sort(() => Math.random() - 0.5);
 
   return (
-    <View style={styles.container}>
-      <QuestionCard
-        category={questions.category}
-        question={decodeCharacters(questions.question)}
-      />
-      <View style={styles.answerCards}>
-        {shuffledAnswers.map((answer, index) => (
-          <AnswerCard key={index} answer={answer} />
-        ))}
+    <LinearGradient
+      style={styles.gradientContainer}
+      colors={BackgroundGradients.primary.colors}
+      start={BackgroundGradients.primary.start}
+      end={BackgroundGradients.primary.end}
+    >
+      <View style={styles.container}>
+        <QuestionCard
+          category={questions.category}
+          question={decodeCharacters(questions.question)}
+        />
+        <View style={styles.answerCards}>
+          {shuffledAnswers.map((answer, index) => (
+            <AnswerCard key={index} answer={answer} />
+          ))}
+        </View>
+        <Timer />
       </View>
-      <Timer />
-    </View>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
+  gradientContainer: {
+    flex: 1
+  },
   container: {
     flex: 1,
     alignItems: "center",

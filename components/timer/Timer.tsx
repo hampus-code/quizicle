@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { View, StyleSheet } from "react-native";
 import { ProgressBar } from "react-native-paper";
+import { Progressbar } from "../../types/colors";
 
 export default function Timer() {
   const totalTime = 15;
@@ -32,10 +33,10 @@ export default function Timer() {
   const progress = timer / totalTime;
 
   return (
-    <View>
+    <View style={styles.container}>
       <ProgressBar
         progress={progress}
-        color="green"
+        color={Progressbar.primary}
         style={styles.progressbar}
       />
     </View>
@@ -43,10 +44,16 @@ export default function Timer() {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "flex-end",
+    alignItems: "center",
+    paddingBottom: 40
+  },
   progressbar: {
     width: 250,
     height: 15,
     borderRadius: 20,
-    marginTop: 150
+    backgroundColor: Progressbar.background
   }
 });
