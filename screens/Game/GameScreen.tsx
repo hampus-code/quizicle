@@ -6,13 +6,18 @@ import AnswerCard from "../../components/card/AnswerCard";
 import Timer from "../../components/timer/Timer";
 import { LinearGradient } from "expo-linear-gradient";
 import { BackgroundGradients } from "../../types/colors";
+import { useEffect, useState } from "react";
 
 export default function GameScreen() {
+  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
+  const [shuffledAnswers, setShuffledAnswers] = useState<string[]>([]);
+
   const decodeCharacters = (char: string) =>
     char
       .replace(/&quot;/g, '"')
       .replace(/&#039;/g, "'")
       .replace(/&amp;/g, "&");
+
   const { data: questions } = useQuery({
     queryKey: ["questions"],
     queryFn: () => fetchTriviaQuestions()
@@ -21,7 +26,22 @@ export default function GameScreen() {
   if (!questions) return null;
 
   const allAnswers = [...questions.incorrect_answers, questions.correct_answer];
-  const shuffledAnswers = allAnswers.sort(() => Math.random() - 0.5);
+  const correctAnswer = questions?.correct_answer;
+
+  function handleAnswerCard(answer: string) {
+    setSelectedAnswer(answer);
+  }
+
+  useEffect(() => {
+    if (questions) {
+      const allAnswers = [
+        ...questions.incorrect_answers,
+        questions.correct_answer
+      ];
+      const shuffled = allAnswers.sort(() => Math.random() - 0.5);
+      setShuffledAnswers(shuffled);
+    }
+  }, [questions]);
 
   return (
     <LinearGradient
@@ -37,7 +57,15 @@ export default function GameScreen() {
         />
         <View style={styles.answerCards}>
           {shuffledAnswers.map((answer, index) => (
-            <AnswerCard key={index} answer={answer} />
+            <AnswerCard
+              key={index}
+              answer={decodeCharacters(answer)}
+              onPress={() => handleAnswerCard(answer)}
+              isSelectedAnswer={selectedAnswer === answer}
+              isCorrectAnswer={
+                selectedAnswer !== null && answer === correctAnswer
+              }
+            />
           ))}
         </View>
         <Timer />
