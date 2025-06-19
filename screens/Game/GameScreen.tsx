@@ -11,6 +11,8 @@ import { useEffect, useState } from "react";
 export default function GameScreen() {
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [shuffledAnswers, setShuffledAnswers] = useState<string[]>([]);
+  const [questionKey, setQuestionKey] = useState(0);
+  const [stopTimer, setStopTimer] = useState(false);
 
   const decodeCharacters = (char: string) =>
     char
@@ -23,13 +25,16 @@ export default function GameScreen() {
     queryFn: () => fetchTriviaQuestions()
   });
 
-  if (!questions) return null;
-
-  const allAnswers = [...questions.incorrect_answers, questions.correct_answer];
-  const correctAnswer = questions?.correct_answer;
+  const correctAnswer = questions?.correct_answer ?? "";
 
   function handleAnswerCard(answer: string) {
     setSelectedAnswer(answer);
+    setStopTimer(true);
+  }
+
+  function handleTimeUp() {
+    setSelectedAnswer("");
+    setStopTimer(true);
   }
 
   useEffect(() => {
@@ -40,6 +45,8 @@ export default function GameScreen() {
       ];
       const shuffled = allAnswers.sort(() => Math.random() - 0.5);
       setShuffledAnswers(shuffled);
+      setSelectedAnswer(null);
+      setStopTimer(false);
     }
   }, [questions]);
 
@@ -51,24 +58,38 @@ export default function GameScreen() {
       end={BackgroundGradients.primary.end}
     >
       <View style={styles.container}>
-        <QuestionCard
-          category={questions.category}
-          question={decodeCharacters(questions.question)}
-        />
-        <View style={styles.answerCards}>
-          {shuffledAnswers.map((answer, index) => (
-            <AnswerCard
-              key={index}
-              answer={decodeCharacters(answer)}
-              onPress={() => handleAnswerCard(answer)}
-              isSelectedAnswer={selectedAnswer === answer}
-              isCorrectAnswer={
-                selectedAnswer !== null && answer === correctAnswer
-              }
+        {!questions ? (
+          <QuestionCard category="" question="Loading..." />
+        ) : (
+          <>
+            <QuestionCard
+              category={questions.category}
+              question={decodeCharacters(questions.question)}
             />
-          ))}
-        </View>
-        <Timer />
+            <View style={styles.answerCards}>
+              {shuffledAnswers.map((answer, index) => (
+                <AnswerCard
+                  key={index}
+                  answer={decodeCharacters(answer)}
+                  onPress={
+                    selectedAnswer === null
+                      ? () => handleAnswerCard(answer)
+                      : undefined
+                  }
+                  isSelectedAnswer={selectedAnswer === answer}
+                  isCorrectAnswer={
+                    selectedAnswer !== null && answer === correctAnswer
+                  }
+                />
+              ))}
+            </View>
+          </>
+        )}
+        <Timer
+          startTimer={questionKey}
+          stopTimer={stopTimer}
+          onTimeUp={handleTimeUp}
+        />
       </View>
     </LinearGradient>
   );
