@@ -8,7 +8,7 @@ export default function AnswerCard({
   isCorrectAnswer
 }: {
   answer: string;
-  onPress: () => void;
+  onPress?: () => void;
   isSelectedAnswer: boolean;
   isCorrectAnswer: boolean;
 }) {

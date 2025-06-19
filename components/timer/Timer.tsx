@@ -3,19 +3,33 @@ import { View, StyleSheet } from "react-native";
 import { ProgressBar } from "react-native-paper";
 import { Progressbar } from "../../types/colors";
 
-export default function Timer() {
+export default function Timer({
+  startTimer,
+  stopTimer,
+  onTimeUp
+}: {
+  startTimer: number;
+  stopTimer?: boolean;
+  onTimeUp?: () => void;
+}) {
   const totalTime = 15;
   const [timer, setTimer] = useState(totalTime);
   const [isRunning, setIsRunning] = useState(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
+    setTimer(totalTime);
+    setIsRunning(true);
+  }, [startTimer]);
+
+  useEffect(() => {
     if (isRunning) {
       intervalRef.current = setInterval(() => {
         setTimer((prev) => {
-          if (prev <= 1) {
+          if (prev <= 0) {
             clearInterval(intervalRef.current!);
             setIsRunning(false);
+            if (onTimeUp) onTimeUp();
             return 0;
           }
           return prev - 1;
@@ -25,10 +39,13 @@ export default function Timer() {
     }
   }, [isRunning]);
 
-  function handleStartTimer() {
-    setTimer(totalTime);
-    setIsRunning(true);
-  }
+  useEffect(() => {
+    if (stopTimer && intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+      setIsRunning(false);
+    }
+  }, [stopTimer]);
 
   const progress = timer / totalTime;
 
