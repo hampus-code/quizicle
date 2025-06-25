@@ -1,4 +1,4 @@
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Alert } from "react-native";
 import QuestionCard from "../../components/card/QuestionCard";
 import { useQuery } from "@tanstack/react-query";
 import { fetchTriviaQuestions } from "../../api/APIMethods";
@@ -13,6 +13,8 @@ export default function GameScreen() {
   const [shuffledAnswers, setShuffledAnswers] = useState<string[]>([]);
   const [questionKey, setQuestionKey] = useState(0);
   const [stopTimer, setStopTimer] = useState(false);
+  const [questionCount, setQuestionCount] = useState(1);
+  const totalQuestions = 3;
 
   const decodeCharacters = (char: string) =>
     char
@@ -21,7 +23,7 @@ export default function GameScreen() {
       .replace(/&amp;/g, "&");
 
   const { data: questions } = useQuery({
-    queryKey: ["questions"],
+    queryKey: ["questions", questionKey],
     queryFn: () => fetchTriviaQuestions()
   });
 
@@ -30,11 +32,28 @@ export default function GameScreen() {
   function handleAnswerCard(answer: string) {
     setSelectedAnswer(answer);
     setStopTimer(true);
+    setTimeout(() => {
+      showNextQuestion();
+    }, 1500);
+  }
+
+  function showNextQuestion() {
+    if (questionCount < totalQuestions) {
+      setQuestionKey((prev) => prev + 1);
+      setQuestionCount((prev) => prev + 1);
+      setSelectedAnswer(null);
+      setStopTimer(false);
+    } else {
+      Alert.alert("Game Over!");
+    }
   }
 
   function handleTimeUp() {
     setSelectedAnswer("");
     setStopTimer(true);
+    setTimeout(() => {
+      showNextQuestion();
+    }, 1500);
   }
 
   useEffect(() => {
